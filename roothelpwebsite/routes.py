@@ -27,18 +27,19 @@ def get_weather(lat, lon, api_key):
 @app.route("/home")
 def home():
     # Automatically determine latitude and longitude
-    form = DataForm()
     g = geocoder.ip('me')
-    return render_template('Layout.html', latitude=g.latlng[0], longitude=g.latlng[1], form = form)
+    form = DataForm(latitude=g.latlng[0], longitude=g.latlng[1])
+    return render_template('Layout.html', form = form)
 
 @app.route('/calculate', methods=['POST'])
 def calculate():
-    form = DataForm()
-    crop_type = form['cropType']
-    area = float(form['area'])
-    soil_moisture = float(form['soilMoisture'])
-    latitude = float(form['latitude'])
-    longitude = float(form['longitude'])
-    api_key = "6d9d8a496b4cbad80299f18349888065"
+    # g = geocoder.ip('me')
+    # form = DataForm(latitude=g.latlng[0], longitude=g.latlng[1])
+    # crop_type = form['cropType']
+    # area = (form['area'])
+    # soil_moisture = (form['soilMoisture'])
+    # latitude = float(form['latitude'])
+    # longitude = float(form['longitude'])
+    # api_key = "6d9d8a496b4cbad80299f18349888065"
 
     return render_template('calculate.html')
