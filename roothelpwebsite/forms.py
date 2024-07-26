@@ -1,13 +1,13 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, FloatField
-from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
-
+from wtforms import StringField, FloatField
+from wtforms.validators import DataRequired
 
 class DataForm(FlaskForm):
-    def __init__(self, latitude, longitude):
-        self.latitude = latitude
-        self.longitude = longitude
+    cropType = StringField('Crop Type', validators=[DataRequired()])
+    area = FloatField('Area', validators=[DataRequired()])
+    soilMoisture = FloatField('Soil Moisture', validators=[DataRequired()])
 
-    cropType = StringField('cropType', validators= [DataRequired()])
-    area = FloatField('area', validators= [DataRequired()])
-    soilMoisture = FloatField('soilMoisture', validators= [DataRequired()])
+    def __init__(self, *args, **kwargs):
+        self.latitude = kwargs.pop('latitude', None)
+        self.longitude = kwargs.pop('longitude', None)
+        super(DataForm, self).__init__(*args, **kwargs)

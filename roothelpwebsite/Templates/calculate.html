@@ -50,18 +50,16 @@
         <h1>Irrigation Requirement Calculator - Results</h1>
         <div class="result">
             <h2>Entered Data</h2>
-            <p><strong>Crop Type:</strong> Wheat</p>
-            <p><strong>Area:</strong> 100 m²</p>
-            <p><strong>Soil Moisture:</strong> 20%</p>
-            <p><strong>Latitude:</strong> 40.7128</p>
-            <p><strong>Longitude:</strong> -74.0060</p>
+            <p><strong>Crop Type:</strong> {{ crop_type }}</p>
+            <p><strong>Area:</strong> {{ area }} m²</p>
+            <p><strong>Soil Moisture:</strong> {{ soil_moisture }}%</p>
             
             <h2>Weather Data</h2>
-            <p><strong>Temperature:</strong> 25°C</p>
-            <p><strong>Weather:</strong> Sunny</p>
+            <p><strong>Temperature:</strong> {{ weather_data.city }} </p>
+            <p><strong>Weather:</strong> {{ weather_data.weather }} °C</p>
             
             <h2>Calculation Result</h2>
-            <p><strong>Water Required:</strong> 5 metric tonnes</p>
+            <p><strong>Water Required:</strong> {{ water_required }} metric tonnes</p>
         </div>
         <a href="/" class="back-link">Back to Calculator</a>
     </div>

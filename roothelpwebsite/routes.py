@@ -1,24 +1,28 @@
 from roothelpwebsite import app
-from flask import  render_template, url_for, request, flash, redirect
+from flask import render_template, request, redirect
 import geocoder
 from roothelpwebsite.forms import DataForm
 import requests
+import http.client
 
-def get_weather(lat, lon, api_key):
-    base_url = f"https://api.openweathermap.org/data/3.0/onecall?lat={lat}&lon={lon}&exclude=alerts&appid={api_key}&units=metric"
-    params = {
-        'lat': lat,
-        'lon': lon,
-        'appid': api_key,
-        'units': 'metric'
+
+def get_weather(lat, lon):
+    url = "https://weatherapi-com.p.rapidapi.com/current.json"
+
+    query_string = {"q":f"{lat},{lon}"}
+
+    headers = {
+	"x-rapidapi-key": "8291a087b6msha1baa6a898cfc2ep18e54ajsn16cd191a0aab",
+	"x-rapidapi-host": "weatherapi-com.p.rapidapi.com"
     }
-    response = requests.get(base_url, )
+
+    response = requests.get(url, headers=headers, params=query_string)
     data = response.json()
-    
+
     if response.status_code == 200:
         return {
-            'temperature': data['main']['temp'],
-            'weather': data['weather'][0]['description']
+            'city': data['location']['name'],
+            'weather': data['current']['temp_c']
         }
     else:
         return {'error': data.get('message', 'An error occurred')}
@@ -26,20 +30,24 @@ def get_weather(lat, lon, api_key):
 @app.route("/")
 @app.route("/home")
 def home():
-    # Automatically determine latitude and longitude
-    g = geocoder.ip('me')
-    form = DataForm(latitude=g.latlng[0], longitude=g.latlng[1])
-    return render_template('Layout.html', form = form)
+    geo_code = geocoder.ip('me')
+    form = DataForm(latitude=geo_code.latlng[0], longitude=geo_code.latlng[1])
+    return render_template('Layout.html', form=form)
 
 @app.route('/calculate', methods=['POST'])
 def calculate():
-    # g = geocoder.ip('me')
-    # form = DataForm(latitude=g.latlng[0], longitude=g.latlng[1])
-    # crop_type = form['cropType']
-    # area = (form['area'])
-    # soil_moisture = (form['soilMoisture'])
-    # latitude = float(form['latitude'])
-    # longitude = float(form['longitude'])
-    # api_key = "6d9d8a496b4cbad80299f18349888065"
-
-    return render_template('calculate.html')
+    geo_code = geocoder.ip('me')
+    form = DataForm(request.form, latitude=geo_code.latlng[0], longitude=geo_code.latlng[1])
+    
+    crop_type = form.cropType.data
+    area = form.area.data
+    soil_moisture = form.soilMoisture.data
+    
+    # Fetch weather data using the latitude and longitude
+    weather_data = get_weather(form.latitude, form.longitude)
+    print(weather_data)
+    
+    if 'error' in weather_data:
+        return render_template('calculate.html', error=weather_data['error'])
+    
+    return render_template('calculate.html', crop_type=crop_type, area=area, soil_moisture=soil_moisture, weather_data=weather_data)
