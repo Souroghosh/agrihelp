@@ -7,4 +7,6 @@ from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 
+app.config['SECRET_KEY'] = 'bbf34737e43416a1318538f507cb100e'
+
 from roothelpwebsite import routes
